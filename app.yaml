@@ -15,6 +15,10 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
+- url: /blog/(register|login).*
+  login: admin
+  script: main.app
+
 - url: .*
   script: main.app
 
