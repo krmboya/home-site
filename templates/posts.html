@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} posts {% endblock %}
+
+{% block content %}
+
+{% if entries %}
+{% for entry in entries %}
+<div class="page-item">
+  <div class="item-title"><a href="/blog/entry/{{ entry.entry_id }}">{{ entry.title|e }}</a></div>
+  <div class="item-meta">
+    {% if entry.slug %}{{ entry.slug|e }}<br />{% endif %}
+    Posted {{ entry.date.strftime("%Y %B %d %H:%M")}}
+  </div>
+</div>
+<br />
+{% endfor %}
+{% else %}
+<p>No posts currently.. </p>
+{% endif %}
+
+{% endblock %}

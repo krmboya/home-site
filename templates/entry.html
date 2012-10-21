@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ entry.title|e }} {% endblock %}
+
+{% block content %}
+<h2>{{ entry.title|e }}</h2>
+{% if entry.slug %}{{ entry.slug|e }}{% endif %}
+<div class="entry-body">
+{{ entry.body_html }}
+</div>
+<br />
+<div id="blog_meta">
+  Posted on {{ entry.date.strftime("%Y, %B, %d %H:%M") }}.
+</div>
+
+{% endblock %}

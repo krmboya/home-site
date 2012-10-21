@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %} blog {% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+    {% block extra_js %}{% endblock %}
+  </head>
+  <body>
+
+    <div id="navbar">
+      <ul>
+	<a href="/blog/posts"><li>latest</li></a>
+	<a href=""><li>popular</li></a>
+	<a href="/"><li class="right-align">back to root</li></a>
+      </ul>
+    </div>
+
+    {% if user %}
+    <div class="notifications"><p>Welcome {{ user.username|e }} <a href="/blog/logout">logout</a></p> </div>
+    {% endif %}
+
+    <div id="right-pane" class="right-align">
+      Tags:<br />
+      {% if tags %}
+      {% for tag in tags %}
+      <a href="/blog/tag/{{ tag.name|e }}">{{ tag.name|e }}</a>{% if not loop.last %}. {% endif %}
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    <div id="left-pane">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+
+  </body>
+</html>

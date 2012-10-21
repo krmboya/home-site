@@ -1,0 +1,10 @@
+README
+------
+
+My home site that runs on Google's Python App Engine platform.
+
+To run it:
+
+- Download the GAE python sdk
+- Rename 'my.conf.py' to 'conf.py'
+- Generate a random character string and insert it in conf.py
