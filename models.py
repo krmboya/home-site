@@ -7,12 +7,15 @@ import logging
 class User(db.Model):
     username = db.StringProperty(required=True)
     password = db.StringProperty(required=True)
+    email = db.EmailProperty()
     is_admin = db.BooleanProperty(default=False)
 
-def create_user(username, password):
+def create_user(username, email, password):
     '''Register user and return user object'''
     password_hash = utils.make_hash(password)
-    new_user = User(username=username, password=password_hash)
+    new_user = User(username=username, 
+                    password=password_hash,
+                    email=email)
     new_user.is_admin = False
     try:
         new_user.put()
@@ -48,6 +51,7 @@ class Entry(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
     author = db.IntegerProperty(required=True)
     tags = db.StringListProperty()
+    category = db.StringListProperty()
 
     def put(self, *args, **kwargs):
         self.body_html = markdown2.markdown(self.body)
@@ -56,11 +60,15 @@ class Entry(db.Model):
 class Tag(db.Model):
     name = db.StringProperty()
 
-def save_entry(title, body, slug, author, tags=[]):
-    new_entry = Entry(title=title,
-                      body=body,
-                      slug=slug,
-                      author=author)
+def save_entry(title, body, slug, author, tags=[], entry_id=0):
+    if not entry_id:
+        new_entry = Entry(title=title,
+                          body=body,
+                          slug=slug,
+                          author=author)
+    else:
+        new_entry = get_entry_by_id(entry_id) #retrieve entry to edit
+        new_entry.title, new_entry.body, new_entry.slug = title, body, slug
     tags_available = set([tag.name for tag in list(db.GqlQuery("SELECT * from Tag"))])
     for tag in tags:
         if tag not in tags_available:
@@ -75,6 +83,7 @@ def get_entry_by_id(entry_id):
     entry = Entry.get_by_id(entry_id)
     entry.entry_id = entry_id
     return entry
+
 
 def get_entries(latest=True, conditions=[]):
     query_strings = ["SELECT * FROM Entry"]

@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
+
+
   <head>
     <title>{% block title %} blog {% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
     {% block extra_js %}{% endblock %}
   </head>
+
+
   <body>
 
     <div id="navbar">
       <ul>
-	<a href="/blog/posts"><li>latest</li></a>
-	<a href=""><li>popular</li></a>
-	<a href="/"><li class="right-align">back to root</li></a>
+	<a href="/blog/posts"><li>all</li></a>
+	<a href=""><li>notes</li></a>
+	<a href=""><li>logs</li></a>
+	<a href="/"><li class="right-align">homepage</li></a>
       </ul>
     </div>
 
+    
     {% if user %}
     <div class="notifications"><p>Welcome {{ user.username|e }} <a href="/blog/logout">logout</a></p> </div>
     {% endif %}
+
 
     <div id="right-pane" class="right-align">
       Tags:<br />
@@ -27,6 +34,7 @@
       {% endfor %}
       {% endif %}
     </div>
+
 
     <div id="left-pane">
       {% block content %}

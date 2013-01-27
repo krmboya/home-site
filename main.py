@@ -58,11 +58,13 @@ class RegistrationHandler(BaseHandler):
     def post(self):
         errors = []
         username = self.request.get('username'); logging.error(username)
+        email = self.request.get('email'); logging.error(email)
         password = self.request.get('password'); logging.error(password)
         confirm_password = self.request.get('confirm_password'); logging.error(confirm_password)
-        if (username and password and (password == confirm_password)):
+        if (username and email and password and (password == confirm_password)):
             username = utils.clean_input(username)
-            user = models.create_user(username, password)
+            email = utils.clean_input(email)
+            user = models.create_user(username, email, password)
             if user:
                 self.set_user(user)
                 self.redirect('/blog/posts')
@@ -117,15 +119,20 @@ class BlogPostHandler(BaseHandler):
         body = self.request.get('body')
         tags = self.request.get('entry_tags')
         slug = self.request.get('slug')
+        entry_id = self.request.get('entry_id')
         if (title and body):
             title = utils.clean_input(title)
-            body = utils.clean_input(body)
+            # line below escaped to prevent escaping of raw html
+            # body = utils.clean_input(body)  
             slug = utils.clean_input(slug)
+            if entry_id:
+                try: entry_id = int(utils.clean_input(entry_id))
+                except TypeError: entry_id = 0
             if tags:
                 tags = tags.split(",")
                 tags = [utils.clean_input(tag) for tag in tags]
-            entry = models.save_entry(title, body, slug, user.user_id, tags)
-            self.redirect('/blog/entry/%d' % entry.entry_id)
+            entry = models.save_entry(title, body, slug, user.user_id, tags, (entry_id or 0))
+            self.redirect('/blog/entry/view/%d' % entry.entry_id)
         if not title: errors.append('Title is required')
         if not body: errors.append('Body is required.')
         self.render_template('post_entry.html', {'errors': errors,
@@ -135,12 +142,20 @@ class BlogPostHandler(BaseHandler):
                                                  'slug': slug})
 
 class PermalinkHandler(BaseHandler):
-    def get(self, entry_id):
+    def get(self, action, entry_id):
         entry = models.get_entry_by_id(int(entry_id))
         if not entry:
             self.error(404)
         else:
-            self.render_template('entry.html', {'entry': entry})
+            if action == 'view':
+                self.render_template('entry.html', {'entry': entry})
+            elif action == 'edit':
+                self.render_template('post_entry.html', 
+                                     { 'title': entry.title,
+                                       'slug': entry.slug,
+                                       'body': entry.body,
+                                       'entry_tags': ', '.join(tag for tag in entry.tags),
+                                       'entry_id': entry.entry_id })
 
 class TagHandler(BaseHandler):
     def get(self, tag_name):
@@ -158,5 +173,5 @@ app = webapp2.WSGIApplication([(r'/?', MainHandler),
                                (r'/blog/logout/?', LogoutHandler),
                                (r'/blog/post_entry/?', BlogPostHandler),
                                (r'/blog/tag/([.\-\s\w]+)/?', TagHandler),
-                               (r'/blog/entry/(\d+)/?', PermalinkHandler)],
+                               (r'/blog/entry/(view|edit)/(\d+)/?', PermalinkHandler)],
                               debug=True)

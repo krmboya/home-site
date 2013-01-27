@@ -4,7 +4,8 @@
 
 {% block content %}
 
-<form method="post">
+<form action="/blog/post_entry" method="post">
+  <input type="hidden" name="entry_id" value="{{ entry_id }}" />
   <table>
     <tr><td><label for="title">title:<label></td><td><input type="text" name="title" id="title" value="{{ title|e }}"/></td></tr>
     <tr><td><label for="slug">slug:<label></td><td><input type="text" name="slug" id="slug" value="{{ slug|e }}"/></td></tr>
