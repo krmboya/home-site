@@ -40,7 +40,7 @@ def make_cookie_hash(user_id):
 
 def clean_input(input_string, evil_chars=[]):
     '''Replaces unsafe characters'''
-    input_string = cgi.escape(input_string)
+    input_string = cgi.escape(input_string, quote=True)
     for char in evil_chars:
         input_string = input_string.replace(char, "")
     return input_string
