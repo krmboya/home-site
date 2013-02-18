@@ -167,6 +167,7 @@ class TagHandler(BaseHandler):
         
 
 app = webapp2.WSGIApplication([(r'/?', MainHandler),
+                               (r'/blog/?', BlogHandler),
                                (r'/blog/posts/?', BlogHandler),
                                (r'/blog/register/?', RegistrationHandler),
                                (r'/blog/login/?', LoginHandler),
