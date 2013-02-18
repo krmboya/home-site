@@ -122,15 +122,15 @@ class BlogPostHandler(BaseHandler):
         entry_id = self.request.get('entry_id')
         if (title and body):
             title = utils.clean_input(title)
-            # line below escaped to prevent escaping of raw html
-            # body = utils.clean_input(body)  
+            # line below commented out to prevent escaping of raw html within markdown
+            # body = utils.clean_input(body)
             slug = utils.clean_input(slug)
             if entry_id:
                 try: entry_id = int(utils.clean_input(entry_id))
                 except TypeError: entry_id = 0
             if tags:
                 tags = tags.split(",")
-                tags = [utils.clean_input(tag) for tag in tags]
+                tags = [utils.clean_input(tag.strip()) for tag in tags]
             entry = models.save_entry(title, body, slug, user.user_id, tags, (entry_id or 0))
             self.redirect('/blog/entry/view/%d' % entry.entry_id)
         if not title: errors.append('Title is required')
@@ -148,7 +148,7 @@ class PermalinkHandler(BaseHandler):
             self.error(404)
         else:
             if action == 'view':
-                self.render_template('entry.html', {'entry': entry})
+                self.render_template('entry.html', {'entry': entry}); 
             elif action == 'edit':
                 self.render_template('post_entry.html', 
                                      { 'title': entry.title,
