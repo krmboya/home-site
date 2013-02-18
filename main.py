@@ -150,6 +150,8 @@ class PermalinkHandler(BaseHandler):
             if action == 'view':
                 self.render_template('entry.html', {'entry': entry}); 
             elif action == 'edit':
+                if not self.get_user():
+                    self.redirect("/blog/login?redirect=%s" % self.request.url)
                 self.render_template('post_entry.html', 
                                      { 'title': entry.title,
                                        'slug': entry.slug,
