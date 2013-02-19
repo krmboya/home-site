@@ -12,7 +12,17 @@
     <tr><td><label for="body">body:<label></td><td><textarea id="body" name="body" cols="70" rows="25">{{ body|e }}</textarea></td></tr>
     <tr><td><label for="tags">tags:</label></td><td><input type="text" name="entry_tags" id="entry_tags" value="{{ entry_tags|e }}"/></td></tr>
   </table>
+
+  <div class="entry_options">
+    <select name="entry_type">
+      <option value="article" selected>article</option>
+      <option value="note">note</option>
+      <option value="log">log</option>
+    </select>
+
+  </div> <br />
   <input type="submit" value="Submit Post" />
+    
 </form>
 
 

@@ -12,6 +12,19 @@ indexes:
 
 - kind: Entry
   properties:
+  - name: entry_status
+  - name: date
+    direction: desc
+
+- kind: Entry
+  properties:
+  - name: entry_status
+  - name: tags
+  - name: date
+    direction: desc
+
+- kind: Entry
+  properties:
   - name: tags
   - name: date
     direction: desc

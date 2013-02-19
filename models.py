@@ -52,6 +52,7 @@ class Entry(db.Model):
     author = db.IntegerProperty(required=True)
     tags = db.StringListProperty()
     category = db.StringListProperty()
+    entry_type = db.StringProperty(default='article')
 
     def put(self, *args, **kwargs):
         self.body_html = markdown2.markdown(self.body)
@@ -60,12 +61,17 @@ class Entry(db.Model):
 class Tag(db.Model):
     name = db.StringProperty()
 
-def save_entry(title, body, slug, author, tags=[], entry_id=0):
+def save_entry(title='Title',  body='body',
+               slug='', author=None,
+               tags=[], entry_id=0,
+               entry_type='article'):
     if not entry_id:
         new_entry = Entry(title=title,
                           body=body,
                           slug=slug,
-                          author=author)
+                          author=author,
+                          entry_type=entry_type)
+                          
     else:
         new_entry = get_entry_by_id(entry_id) #retrieve entry to edit
         new_entry.title, new_entry.body, new_entry.slug = title, body, slug
@@ -81,14 +87,18 @@ def save_entry(title, body, slug, author, tags=[], entry_id=0):
 
 def get_entry_by_id(entry_id):
     entry = Entry.get_by_id(entry_id)
-    entry.entry_id = entry_id
+    entry.entry_id = entry_id; logging.error(entry.entry_type)
     return entry
 
 
-def get_entries(latest=True, conditions=[]):
+def get_entries(latest=True, equal_conditions=[],
+                not_equal_conditions=[]):
     query_strings = ["SELECT * FROM Entry"]
-    if conditions:
-        query_strings.append("WHERE %s" % " AND ".join("%s = '%s'" % (k, v) for k, v in conditions))
+    if (equal_conditions or not_equal_conditions): query_strings.append(" WHERE ")
+    if equal_conditions:
+        query_strings.append(" AND ".join("%s = '%s'" % (k, v) for k, v in equal_conditions))
+    if not_equal_conditions:
+        query_strings.append(" AND ".join("%s != '%s'" % (k, v) for k, v in not_equal_conditions))
     if latest:
         query_strings.append("ORDER BY date DESC")
     query_string = " ".join(query_strings);logging.error(query_string)

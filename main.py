@@ -120,6 +120,7 @@ class BlogPostHandler(BaseHandler):
         tags = self.request.get('entry_tags')
         slug = self.request.get('slug')
         entry_id = self.request.get('entry_id')
+        entry_type = self.request.get('entry_type')
         if (title and body):
             title = utils.clean_input(title)
             # line below commented out to prevent escaping of raw html within markdown
@@ -131,7 +132,14 @@ class BlogPostHandler(BaseHandler):
             if tags:
                 tags = tags.split(",")
                 tags = [utils.clean_input(tag.strip()) for tag in tags]
-            entry = models.save_entry(title, body, slug, user.user_id, tags, (entry_id or 0))
+            entry_type = (entry_type in ['article', 'note', 'log'] and entry_type or '')
+            entry = models.save_entry(title=title,
+                                      body=body,
+                                      slug=slug, 
+                                      author=user.user_id, 
+                                      tags=tags, 
+                                      entry_id=(entry_id or 0),
+                                      entry_type=entry_type)
             self.redirect('/blog/entry/view/%d' % entry.entry_id)
         if not title: errors.append('Title is required')
         if not body: errors.append('Body is required.')
@@ -162,7 +170,8 @@ class PermalinkHandler(BaseHandler):
 class TagHandler(BaseHandler):
     def get(self, tag_name):
         tag_name = utils.clean_input(tag_name)
-        entries = models.get_entries(conditions=[('tags', tag_name)])
+        entries = models.get_entries(equal_conditions=[('tags', tag_name)])
+                                     
         ctx = {}
         ctx['entries'] = entries
         self.render_template('posts.html', ctx)
