@@ -153,13 +153,14 @@ class BlogPostHandler(BaseHandler):
 class PermalinkHandler(BaseHandler):
     def get(self, action, entry_id):
         entry = models.get_entry_by_id(int(entry_id))
+        user = self.get_user()
         if not entry:
             self.error(404)
         else:
             if action == 'view':
-                self.render_template('entry.html', {'entry': entry}); 
+                self.render_template('entry.html', {'entry': entry, 'user': user}); 
             elif action == 'edit':
-                if not self.get_user():
+                if not user:
                     self.redirect("/blog/login?redirect=%s" % self.request.url)
                 self.render_template('post_entry.html', 
                                      { 'title': entry.title,
@@ -181,8 +182,10 @@ class CategoryHandler(BaseHandler):
     def get(self, category):
         category = category[:-1]
         entries = models.get_entries(equal_conditions=[('entry_type', category)])
+        user = self.get_user()
         ctx={}
         ctx['entries'] = entries
+        ctx['user'] = user
         self.render_template('posts.html', ctx)
     
         

@@ -2,6 +2,10 @@
 
 {% block title %} {{ entry.title|e }} {% endblock %}
 
+{% block notifications %}
+{% if user %}<a href="/blog/entry/edit/{{ entry.entry_id }}">edit post</a>{% endif %}
+{% endblock %}
+
 {% block content %}
 <h2>{{ entry.title|e }}</h2>
 {% if entry.slug %}{{ entry.slug|e }}{% endif %}

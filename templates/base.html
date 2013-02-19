@@ -23,7 +23,11 @@
 
     
     {% if user %}
-    <div class="notifications"><p>Welcome {{ user.username|e }} <a href="/blog/logout">logout</a></p> </div>
+    <div class="notifications">
+      <p>Welcome {{ user.username|e }} <a href="/blog/logout">logout</a> 
+      <a href="/blog/post_entry">post entry</a>
+      {% block notifications %}{% endblock %}</p>  
+    </div>
     {% endif %}
 
 
