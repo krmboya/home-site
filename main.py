@@ -121,7 +121,7 @@ class BlogPostHandler(BaseHandler):
         slug = self.request.get('slug')
         entry_id = self.request.get('entry_id')
         entry_type = self.request.get('entry_type')
-        if (title and body):
+        if (title and body and tags):
             title = utils.clean_input(title)
             # line below commented out to prevent escaping of raw html within markdown
             # body = utils.clean_input(body)
@@ -143,6 +143,7 @@ class BlogPostHandler(BaseHandler):
             self.redirect('/blog/entry/view/%d' % entry.entry_id)
         if not title: errors.append('Title is required')
         if not body: errors.append('Body is required.')
+        if not tags: errors.append('At least one tag is required')
         self.render_template('post_entry.html', {'errors': errors,
                                                  'title': title,
                                                  'body': body,
