@@ -175,6 +175,15 @@ class TagHandler(BaseHandler):
         ctx = {}
         ctx['entries'] = entries
         self.render_template('posts.html', ctx)
+
+class CategoryHandler(BaseHandler):
+    def get(self, category):
+        category = category[:-1]
+        entries = models.get_entries(equal_conditions=[('entry_type', category)])
+        ctx={}
+        ctx['entries'] = entries
+        self.render_template('posts.html', ctx)
+    
         
 
 app = webapp2.WSGIApplication([(r'/?', MainHandler),
@@ -185,5 +194,6 @@ app = webapp2.WSGIApplication([(r'/?', MainHandler),
                                (r'/blog/logout/?', LogoutHandler),
                                (r'/blog/post_entry/?', BlogPostHandler),
                                (r'/blog/tag/([.\-\s\w]+)/?', TagHandler),
-                               (r'/blog/entry/(view|edit)/(\d+)/?', PermalinkHandler)],
-                              debug=True)
+                               (r'/blog/entry/(view|edit)/(\d+)/?', PermalinkHandler),
+                               (r'/blog/category/(notes|logs|articles)/?', CategoryHandler)],
+                              debug=True) # set debug to false in production

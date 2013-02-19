@@ -12,6 +12,12 @@ indexes:
 
 - kind: Entry
   properties:
+  - name: category_type
+  - name: date
+    direction: desc
+
+- kind: Entry
+  properties:
   - name: entry_status
   - name: date
     direction: desc
@@ -20,6 +26,12 @@ indexes:
   properties:
   - name: entry_status
   - name: tags
+  - name: date
+    direction: desc
+
+- kind: Entry
+  properties:
+  - name: entry_type
   - name: date
     direction: desc
 
